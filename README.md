@@ -1,28 +1,16 @@
-# LG Bluetooth Remote (experimental)
+# LG Bluetooth Remote V2
 
-A local-only Android Bluetooth HID remote for LG TVs that accept Bluetooth keyboard/mouse/controller input. It does **not** use Internet, mobile data, Wi-Fi, location, or LG cloud services.
+This build is a **minimal Bluetooth HID keyboard diagnostic** for Android 9+.
 
-## What it tries to provide
-- Bluetooth keyboard-style D-pad, Enter/OK, Back, Home/Menu
-- Consumer-control Volume +/−, Mute, Play/Pause, Previous/Next
-- Experimental Channel +/−
-- Bluetooth mouse-style touchpad pointer + tap-to-click
+Why V2 exists: the first build registered a combined keyboard + media + mouse HID descriptor immediately from the profile service callback. Some Android builds reject `BluetoothHidDevice.registerApp()` in that timing/descriptor combination.
 
-## Requirements
-- Android 9 (API 28) or newer
-- Phone firmware must expose Android's `BluetoothHidDevice` profile
-- LG TV must support Bluetooth input devices (keyboard/mouse/controller)
+V2 changes:
 
-## Pairing when your normal remote is broken
-1. Install/open the app and grant Nearby Devices/Bluetooth permissions.
-2. Tap **Make discoverable**.
-3. On the LG TV, open its Bluetooth input-device/controller/keyboard pairing screen. If needed, temporarily use LG ThinQ while your phone is close enough to your home Wi-Fi, or use the TV's physical joystick/button.
-4. Select the phone / **LG BT Remote** if shown and complete pairing.
-5. Back in the app: **Select TV** → choose the paired TV → **Connect to TV**.
-6. Test the D-pad and touchpad first.
+- user presses **Register Bluetooth keyboard** while the Activity is visibly foreground;
+- waits ~900 ms after the button press before registering;
+- uses `BluetoothHidDevice.SUBCLASS1_KEYBOARD`;
+- uses a minimal standard 8-byte keyboard HID descriptor only;
+- shows useful diagnostics (Bluetooth state, permission, HID proxy state, window focus, UID importance);
+- keeps only arrows, OK/Enter, Back/Esc and Home-key testing.
 
-## Important limitations
-This is not an implementation of LG's proprietary Magic Remote protocol and does not provide gyroscope/air-mouse or voice-command emulation. Button behavior varies by TV/webOS model. Some phones/OEM Android builds disable Bluetooth HID Device mode even on supported Android versions.
-
-## Build locally
-Open the project in Android Studio (JDK 17+) and run `assembleDebug`, or use the included GitHub Actions workflow.
+If V2 registers successfully, pair it from the LG TV as a Bluetooth keyboard. If V2 still reports that Android rejected `registerApp()`, direct Android-as-HID mode is likely unavailable/blocked on that phone/ROM. A practical fallback is a two-phone bridge: one phone stays on the same Wi-Fi as the TV and exposes Bluetooth control to the second phone.

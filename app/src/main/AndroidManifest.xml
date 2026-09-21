@@ -11,7 +11,7 @@
 
     <application
         android:allowBackup="true"
-        android:label="LG BT Remote"
+        android:label="LG BT Remote V2"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false">
         <activity
