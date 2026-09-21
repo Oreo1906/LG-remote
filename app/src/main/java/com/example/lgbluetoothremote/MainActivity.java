@@ -395,8 +395,9 @@ public class MainActivity extends Activity {
         boolean permission = hasBtConnectPermission();
         int importance = -1;
         try {
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            if (am != null) importance = am.getUidImportance(android.os.Process.myUid());
+            ActivityManager.RunningAppProcessInfo processInfo = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(processInfo);
+            importance = processInfo.importance;
         } catch (Throwable ignored) {}
 
         String text = "Android " + Build.VERSION.RELEASE + " (API " + Build.VERSION.SDK_INT + ")"
